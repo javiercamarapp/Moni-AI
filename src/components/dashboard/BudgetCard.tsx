@@ -3,40 +3,57 @@ import { useNavigate } from 'react-router-dom';
 import { PiggyBank, TrendingUp, TrendingDown, ShoppingBag, Utensils, Car, Film, Home, CreditCard, Heart, GraduationCap, Zap } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
+import { getCache, setCache, CACHE_KEYS, CACHE_TTL } from '@/lib/cacheService';
+
 interface CategorySpending {
   name: string;
   amount: number;
   icon: string;
   color: string;
 }
+
 interface BudgetCardProps {
   income: number;
   expenses: number;
   totalBudget: number;
 }
+
 const BudgetCard: React.FC<BudgetCardProps> = ({
   income,
   expenses,
   totalBudget
 }) => {
   const navigate = useNavigate();
-  const [topCategories, setTopCategories] = useState<CategorySpending[]>([]);
-  const [loading, setLoading] = useState(true);
+  
+  // Initialize with cached data immediately for instant display
+  const [topCategories, setTopCategories] = useState<CategorySpending[]>(() => {
+    const cached = getCache<CategorySpending[]>(CACHE_KEYS.TOP_CATEGORIES);
+    return cached || [];
+  });
+  const [loading, setLoading] = useState(() => {
+    // If we have cache, don't show loading state
+    const cached = getCache<CategorySpending[]>(CACHE_KEYS.TOP_CATEGORIES);
+    return !cached || cached.length === 0;
+  });
+
   useEffect(() => {
     const fetchTopCategories = async () => {
       try {
-        const {
-          data: {
-            user
-          }
-        } = await supabase.auth.getUser();
+        const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
+
         const now = new Date();
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-        const {
-          data: transactions
-        } = await supabase.from('transactions').select('amount, categories(name)').eq('user_id', user.id).eq('type', 'gasto').gte('transaction_date', startOfMonth.toISOString().split('T')[0]).lte('transaction_date', endOfMonth.toISOString().split('T')[0]);
+
+        const { data: transactions } = await supabase
+          .from('transactions')
+          .select('amount, categories(name)')
+          .eq('user_id', user.id)
+          .eq('type', 'gasto')
+          .gte('transaction_date', startOfMonth.toISOString().split('T')[0])
+          .lte('transaction_date', endOfMonth.toISOString().split('T')[0]);
+
         if (transactions && transactions.length > 0) {
           // Group by category
           const categoryMap = new Map<string, number>();
@@ -47,13 +64,19 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
           });
 
           // Sort and get top 3
-          const sorted = Array.from(categoryMap.entries()).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([name, amount]) => ({
-            name: getShortCategoryName(name),
-            amount,
-            icon: getCategoryIcon(name),
-            color: getCategoryColor()
-          }));
+          const sorted = Array.from(categoryMap.entries())
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 3)
+            .map(([name, amount]) => ({
+              name: getShortCategoryName(name),
+              amount,
+              icon: getCategoryIcon(name),
+              color: getCategoryColor()
+            }));
+
           setTopCategories(sorted);
+          // Cache the result with user id for proper isolation
+          setCache(CACHE_KEYS.TOP_CATEGORIES, sorted, CACHE_TTL.SHORT, user.id);
         }
       } catch (error) {
         console.error('Error fetching top categories:', error);
@@ -61,6 +84,7 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
         setLoading(false);
       }
     };
+
     fetchTopCategories();
   }, []);
   const getShortCategoryName = (name: string): string => {
