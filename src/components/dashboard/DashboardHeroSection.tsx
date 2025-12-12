@@ -155,16 +155,25 @@ const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }
                       axisLine={false}
                       tickLine={false}
                       tick={{ fontSize: 9, fill: '#9ca3af' }}
-                      interval={0}
-                      tickFormatter={(value, index) => {
-                        // Only show unique months (first occurrence)
-                        const data = netWorthData?.chartData || [];
-                        const previousDates = data.slice(0, index).map(d => d.date);
-                        if (previousDates.includes(value)) {
-                          return '';
-                        }
+                      interval="preserveStartEnd"
+                      tickFormatter={(value) => {
+                        // Show only month abbreviation (first 3 chars)
                         return value;
                       }}
+                      ticks={(() => {
+                        const data = netWorthData?.chartData || [];
+                        if (data.length === 0) return [];
+                        // Get unique months - show only first occurrence of each month
+                        const seenMonths = new Set<string>();
+                        return data
+                          .filter(d => {
+                            const month = d.date.split(' ')[0]; // Get month part (e.g., "Dic")
+                            if (seenMonths.has(month)) return false;
+                            seenMonths.add(month);
+                            return true;
+                          })
+                          .map(d => d.date);
+                      })()}
                       hide={typeof window !== 'undefined' && window.innerWidth < 768}
                     />
                     <YAxis
