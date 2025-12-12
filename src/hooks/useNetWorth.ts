@@ -105,27 +105,12 @@ export function useNetWorth(timeRange: TimeRange) {
       const totalLiabilities = liabilities?.reduce((sum, l) => sum + Number(l.valor), 0) || 0;
       const currentNetWorth = totalAssets - totalLiabilities;
 
-      // Format date labels based on time range
-      const formatDateLabel = (date: Date, range: TimeRange): string => {
+      // Format date labels - always show day and month
+      const formatDateLabel = (date: Date): string => {
         const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
         const month = months[date.getMonth()];
         const day = date.getDate();
-        const year = date.getFullYear().toString().slice(-2);
-        
-        switch (range) {
-          case '1M':
-            return `${day} ${month}`;
-          case '3M':
-            return `${day} ${month}`;
-          case '6M':
-            return month;
-          case '1Y':
-            return month;
-          case 'All':
-            return `${month} ${year}`;
-          default:
-            return `${day} ${month}`;
-        }
+        return `${day} ${month}`;
       };
 
       // Get today's date
@@ -133,7 +118,7 @@ export function useNetWorth(timeRange: TimeRange) {
 
       // Format snapshots for chart (only historical data, not today)
       let chartData: ChartDataPoint[] = snapshots?.map(s => ({
-        date: formatDateLabel(new Date(s.snapshot_date), timeRange),
+        date: formatDateLabel(new Date(s.snapshot_date)),
         value: Number(s.net_worth),
         assets: Number(s.total_assets),
         liabilities: Number(s.total_liabilities)
@@ -183,7 +168,7 @@ export function useNetWorth(timeRange: TimeRange) {
 
         // All points have the same value (horizontal line)
         chartData = dates.map(date => ({
-          date: formatDateLabel(date, timeRange),
+          date: formatDateLabel(date),
           value: currentNetWorth,
           assets: totalAssets,
           liabilities: totalLiabilities
@@ -194,7 +179,7 @@ export function useNetWorth(timeRange: TimeRange) {
 
         if (!hasToday) {
           chartData.push({
-            date: formatDateLabel(now, timeRange),
+            date: formatDateLabel(now),
             value: currentNetWorth,
             assets: totalAssets,
             liabilities: totalLiabilities
