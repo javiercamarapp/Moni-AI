@@ -140,7 +140,7 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                             const Icon = getGoalIcon(goal.name);
 
                             return (
-                                <CarouselItem key={goal.id} className="pl-3 basis-[42vw] md:basis-[160px]">
+                                <CarouselItem key={goal.id} className="pl-3 basis-[42vw] md:basis-[200px] lg:basis-[240px]">
                                     <div
                                         className="w-full bg-white rounded-2xl p-3 shadow-[0_10px_20px_-8px_rgba(0,0,0,0.05)] border border-gray-50 relative overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform"
                                         onClick={() => navigate(goal.is_group ? `/group-goals/${goal.id}` : `/goals/${goal.id}`)}
