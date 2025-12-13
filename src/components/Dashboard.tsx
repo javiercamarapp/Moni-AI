@@ -1166,7 +1166,7 @@ const Dashboard = () => {
 
         {/* Score and Net Worth Cards - moved up */}
         <div className="relative z-10 px-6 lg:max-w-5xl lg:mx-auto pb-4 mt-1">
-          <DashboardHeroSection scoreMoni={scoreMoni} />
+          <DashboardHeroSection scoreMoni={scoreMoni} isLoadingScore={dashboardData.isLoadingScore} />
         </div>
       </div>
 

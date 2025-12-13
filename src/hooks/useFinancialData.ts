@@ -211,14 +211,7 @@ export const useScoreMoni = () => {
       return score;
     },
     staleTime: STALE_TIME,
-    initialData: () => {
-      // Try new cache first, then legacy
-      const cached = getCache<number>(CACHE_KEYS.SCORE_MONI);
-      if (cached !== null) return cached;
-
-      const legacy = localStorage.getItem('scoreMoni');
-      return legacy ? Number(legacy) : undefined;
-    },
+    // Don't use initialData - show loading state instead of fake "40"
   });
 };
 
