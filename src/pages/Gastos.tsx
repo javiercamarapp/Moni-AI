@@ -8,7 +8,8 @@ import {
   Plus,
   ShoppingCart,
   ChevronDown,
-  ArrowLeft
+  ArrowLeft,
+  Trash2
 } from 'lucide-react';
 import {
   AreaChart,
@@ -93,6 +94,30 @@ const Gastos = () => {
       setTransactions(transactionsData || []);
     } catch (error) {
       console.error('Error fetching data:', error);
+    }
+  };
+
+  const handleDeleteTransaction = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('transactions')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setTransactions(prev => prev.filter(t => t.id !== id));
+      toast({
+        title: "Gasto eliminado",
+        description: "La transacción ha sido eliminada correctamente",
+      });
+    } catch (error) {
+      console.error('Error deleting transaction:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo eliminar la transacción",
+        variant: "destructive"
+      });
     }
   };
 
@@ -436,10 +461,20 @@ const Gastos = () => {
                         )}
                       </div>
                     </div>
-                    <div className="text-right flex-shrink-0">
+                    <div className="text-right flex-shrink-0 flex items-center gap-2">
                       <span className="block font-bold text-[#5D4037] text-sm">
                         -${Number(tx.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                       </span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteTransaction(tx.id);
+                        }}
+                        className="p-1.5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-red-50 transition-all"
+                        aria-label="Eliminar transacción"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-400 hover:text-red-500" />
+                      </button>
                     </div>
                   </div>
                 );
