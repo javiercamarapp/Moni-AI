@@ -320,12 +320,22 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
 
       // Invalidate all caches and React Query queries for immediate UI update
       invalidateAllCache();
-      await queryClient.invalidateQueries({ queryKey: ['transactions'] });
-      await queryClient.invalidateQueries({ queryKey: ['dashboard-data'] });
-      await queryClient.invalidateQueries({ queryKey: ['financial-data'] });
-      await queryClient.invalidateQueries({ queryKey: ['monthly-totals'] });
-      await queryClient.invalidateQueries({ queryKey: ['balance-data'] });
-      await queryClient.invalidateQueries({ queryKey: ['recent-transactions'] });
+      
+      // Invalidate ALL relevant queries - use exact keys from useFinancialData.ts
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['transactions'] }),
+        queryClient.invalidateQueries({ queryKey: ['monthlyTotals'] }),
+        queryClient.invalidateQueries({ queryKey: ['netWorth'] }),
+        queryClient.invalidateQueries({ queryKey: ['goals'] }),
+        queryClient.invalidateQueries({ queryKey: ['scoreMoni'] }),
+        queryClient.invalidateQueries({ queryKey: ['accountsList'] }),
+        queryClient.invalidateQueries({ queryKey: ['bankConnections'] }),
+        queryClient.invalidateQueries({ queryKey: ['groupGoals'] }),
+      ]);
+      
+      // Force refetch to ensure fresh data
+      await queryClient.refetchQueries({ queryKey: ['monthlyTotals'] });
+      await queryClient.refetchQueries({ queryKey: ['transactions'] });
 
       toast({
         title: isIncome ? 'Ingreso registrado' : 'Gasto registrado',
