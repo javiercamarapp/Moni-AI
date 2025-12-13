@@ -14,6 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { TransactionSchema } from '@/lib/validation';
 import { invalidateAllCache } from '@/lib/cacheService';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   getStandardCategories,
   CATEGORY_ICONS,
@@ -42,6 +43,7 @@ interface DisplayCategory {
 
 const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordModalProps) => {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [amount, setAmount] = useState(initialData?.amount || '0');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
   const [note, setNote] = useState(initialData?.note || '');
@@ -230,8 +232,9 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
   };
 
   const handleSave = async () => {
-    if (parseFloat(amount) <= 0) {
-      toast({ title: 'Error', description: 'El monto debe ser mayor a 0', variant: 'destructive' });
+    const numAmount = parseFloat(amount);
+    if (numAmount <= 0 || numAmount >= 100000000000) {
+      toast({ title: 'Error', description: 'El monto debe ser mayor a 0 y menor a 100,000,000,000', variant: 'destructive' });
       return;
     }
 
@@ -315,7 +318,14 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
 
       if (error) throw error;
 
+      // Invalidate all caches and React Query queries for immediate UI update
       invalidateAllCache();
+      await queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      await queryClient.invalidateQueries({ queryKey: ['dashboard-data'] });
+      await queryClient.invalidateQueries({ queryKey: ['financial-data'] });
+      await queryClient.invalidateQueries({ queryKey: ['monthly-totals'] });
+      await queryClient.invalidateQueries({ queryKey: ['balance-data'] });
+      await queryClient.invalidateQueries({ queryKey: ['recent-transactions'] });
 
       toast({
         title: isIncome ? 'Ingreso registrado' : 'Gasto registrado',
@@ -353,7 +363,7 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-black/50 z-[50] flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
