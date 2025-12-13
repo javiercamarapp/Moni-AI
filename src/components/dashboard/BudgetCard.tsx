@@ -72,25 +72,30 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
           .lte('transaction_date', endOfMonth.toISOString().split('T')[0]);
 
         if (transactions && transactions.length > 0) {
-          // Group by category
+          // Group by category - keep original names
           const categoryMap = new Map<string, number>();
           transactions.forEach((tx: any) => {
             const rawName = tx.categories?.name || 'Otros';
-            // Use the raw category name directly - no renaming
-            const categoryName = rawName.replace(/^[^\w\sáéíóúñ]+\s*/i, '').trim().split(' ')[0];
-            const current = categoryMap.get(categoryName) || 0;
-            categoryMap.set(categoryName, current + Number(tx.amount));
+            // Keep original category name without modification
+            const current = categoryMap.get(rawName) || 0;
+            categoryMap.set(rawName, current + Number(tx.amount));
           });
 
           const sortedCategories = Array.from(categoryMap.entries())
             .sort((a, b) => b[1] - a[1])
             .slice(0, 3)
-            .map(([name, amount]) => ({
-              name: name.length > 12 ? name.substring(0, 12) : name,
-              amount,
-              icon: getCategoryIcon(name),
-              color: 'bg-[#5D4037]'
-            }));
+            .map(([name, amount]) => {
+              // Remove emoji prefix for display, but keep the rest
+              const displayName = name.replace(/^[^\w\sáéíóúñ]+\s*/i, '').trim();
+              // Truncate only for display if too long
+              const shortName = displayName.length > 14 ? displayName.substring(0, 12) + '…' : displayName;
+              return {
+                name: shortName,
+                amount,
+                icon: getCategoryIcon(name), // Use original name for icon matching
+                color: 'bg-[#5D4037]'
+              };
+            });
 
           setTopCategories(sortedCategories);
           // Cache ONLY the top 3 with user id
