@@ -318,24 +318,18 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
 
       if (error) throw error;
 
-      // Invalidate all caches and React Query queries for immediate UI update
+      // Invalidate all caches for immediate UI update - don't await, fire and forget for speed
       invalidateAllCache();
       
-      // Invalidate ALL relevant queries - use exact keys from useFinancialData.ts
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['transactions'] }),
-        queryClient.invalidateQueries({ queryKey: ['monthlyTotals'] }),
-        queryClient.invalidateQueries({ queryKey: ['netWorth'] }),
-        queryClient.invalidateQueries({ queryKey: ['goals'] }),
-        queryClient.invalidateQueries({ queryKey: ['scoreMoni'] }),
-        queryClient.invalidateQueries({ queryKey: ['accountsList'] }),
-        queryClient.invalidateQueries({ queryKey: ['bankConnections'] }),
-        queryClient.invalidateQueries({ queryKey: ['groupGoals'] }),
-      ]);
-      
-      // Force refetch to ensure fresh data
-      await queryClient.refetchQueries({ queryKey: ['monthlyTotals'] });
-      await queryClient.refetchQueries({ queryKey: ['transactions'] });
+      // Invalidate ALL relevant queries simultaneously - no awaits for faster UI update
+      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      queryClient.invalidateQueries({ queryKey: ['monthlyTotals'] });
+      queryClient.invalidateQueries({ queryKey: ['netWorth'] });
+      queryClient.invalidateQueries({ queryKey: ['goals'] });
+      queryClient.invalidateQueries({ queryKey: ['scoreMoni'] });
+      queryClient.invalidateQueries({ queryKey: ['accountsList'] });
+      queryClient.invalidateQueries({ queryKey: ['bankConnections'] });
+      queryClient.invalidateQueries({ queryKey: ['groupGoals'] });
 
       toast({
         title: isIncome ? 'Ingreso registrado' : 'Gasto registrado',

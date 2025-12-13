@@ -7,9 +7,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 interface DashboardHeroSectionProps {
   scoreMoni: number;
+  isLoadingScore?: boolean;
 }
 
-const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }) => {
+const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni, isLoadingScore = false }) => {
   const navigate = useNavigate();
   const { data: netWorthData, isLoading } = useNetWorth('6M');
 
@@ -62,44 +63,70 @@ const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }
           Score Moni
         </span>
 
-        {/* Semi-circle gauge */}
-        <div className="relative flex items-center justify-center mt-1 mb-0.5">
-          <svg className="w-20 h-12 lg:w-28 lg:h-16" viewBox="0 0 100 55">
-            {/* Background track */}
-            <path
-              d="M 10 50 A 40 40 0 0 1 90 50"
-              fill="none"
-              stroke="#e5e7eb"
-              strokeWidth="10"
-              strokeLinecap="round"
-            />
-            {/* Progress arc */}
-            <path
-              d="M 10 50 A 40 40 0 0 1 90 50"
-              fill="none"
-              stroke={status.color}
-              strokeWidth="10"
-              strokeLinecap="round"
-              strokeDasharray={`${(gaugeAngle / 180) * 125.6} 125.6`}
-            />
-          </svg>
-          {/* Score number */}
-          <div className="absolute bottom-0 flex flex-col items-center">
-            <span className="text-lg lg:text-2xl font-bold text-gray-900">{safeScore}</span>
+        {isLoadingScore ? (
+          // Loading skeleton - all gray
+          <div className="relative flex items-center justify-center mt-1 mb-0.5">
+            <svg className="w-20 h-12 lg:w-28 lg:h-16" viewBox="0 0 100 55">
+              <path
+                d="M 10 50 A 40 40 0 0 1 90 50"
+                fill="none"
+                stroke="#e5e7eb"
+                strokeWidth="10"
+                strokeLinecap="round"
+              />
+            </svg>
+            <div className="absolute bottom-0 flex flex-col items-center">
+              <Skeleton className="h-5 w-8 lg:h-7 lg:w-10" />
+            </div>
           </div>
-        </div>
+        ) : (
+          <>
+            {/* Semi-circle gauge */}
+            <div className="relative flex items-center justify-center mt-1 mb-0.5">
+              <svg className="w-20 h-12 lg:w-28 lg:h-16" viewBox="0 0 100 55">
+                {/* Background track */}
+                <path
+                  d="M 10 50 A 40 40 0 0 1 90 50"
+                  fill="none"
+                  stroke="#e5e7eb"
+                  strokeWidth="10"
+                  strokeLinecap="round"
+                />
+                {/* Progress arc */}
+                <path
+                  d="M 10 50 A 40 40 0 0 1 90 50"
+                  fill="none"
+                  stroke={status.color}
+                  strokeWidth="10"
+                  strokeLinecap="round"
+                  strokeDasharray={`${(gaugeAngle / 180) * 125.6} 125.6`}
+                />
+              </svg>
+              {/* Score number */}
+              <div className="absolute bottom-0 flex flex-col items-center">
+                <span className="text-lg lg:text-2xl font-bold text-gray-900">{safeScore}</span>
+              </div>
+            </div>
 
-        <div className="text-center">
-          <span
-            className="text-[9px] lg:text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
-            style={{
-              backgroundColor: `${status.color}15`,
-              color: status.color
-            }}
-          >
-            {status.label}
-          </span>
-        </div>
+            <div className="text-center">
+              <span
+                className="text-[9px] lg:text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
+                style={{
+                  backgroundColor: `${status.color}15`,
+                  color: status.color
+                }}
+              >
+                {status.label}
+              </span>
+            </div>
+          </>
+        )}
+
+        {isLoadingScore && (
+          <div className="text-center mt-1">
+            <Skeleton className="h-4 w-16 mx-auto rounded-full" />
+          </div>
+        )}
       </div>
 
       {/* Net Worth Card */}
