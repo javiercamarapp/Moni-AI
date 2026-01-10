@@ -441,7 +441,7 @@ const AnalysisView = ({ onBack }: { onBack: () => void }) => {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] flex items-center justify-center bg-coffee-50/95 backdrop-blur-3xl p-4" onClick={() => setSelectedCategory(null)}>
             <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20, opacity: 0 }} onClick={(e) => e.stopPropagation()} className="bg-coffee-900 border border-white/10 rounded-[2.5rem] p-6 w-full max-w-[340px] shadow-2xl relative text-white text-center flex flex-col items-center -mt-8">
               <button onClick={() => setSelectedCategory(null)} className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors">✕</button>
-              <div className={cn("w-20 h-20 rounded-3xl flex items-center justify-center shadow-lg mb-5 text-4xl", selectedCategory.bg, selectedCategory.color)}><selectedCategory.icon /></div>
+              <div className="w-20 h-20 rounded-3xl flex items-center justify-center shadow-lg mb-5 bg-white/10 text-white"><selectedCategory.icon className="w-10 h-10" /></div>
               <h3 className="text-2xl font-black mb-2">{selectedCategory.title}</h3>
               <p className="text-coffee-200 text-sm mb-8 font-medium italic opacity-80 leading-relaxed">"{selectedCategory.insight}"</p>
               <div className="w-full space-y-5">
@@ -458,23 +458,23 @@ const AnalysisView = ({ onBack }: { onBack: () => void }) => {
           {data.map((item, i) => {
             const Icon = item.icon;
             return (
-              <motion.div key={i} initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 * i }} onClick={() => setSelectedCategory(item)} className="bg-white p-5 rounded-[2rem] shadow-sm border border-coffee-100 flex flex-col justify-between h-44 relative overflow-hidden group hover:shadow-md transition-shadow cursor-pointer active:scale-95 duration-200">
-                <div className={cn("absolute -right-6 -top-6 w-24 h-24 rounded-full opacity-10 transition-transform group-hover:scale-110", item.barColor)}></div>
+              <motion.div key={i} initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 * i }} onClick={() => setSelectedCategory(item)} className="bg-coffee-900 p-5 rounded-[2rem] shadow-lg border border-coffee-700/30 flex flex-col justify-between h-44 relative overflow-hidden group hover:shadow-xl transition-shadow cursor-pointer active:scale-95 duration-200">
+                <div className={cn("absolute -right-6 -top-6 w-24 h-24 rounded-full opacity-20 transition-transform group-hover:scale-110", item.barColor)}></div>
                 <div className="flex justify-between items-start mb-4">
-                  <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm", item.bg, item.color)}><Icon /></div>
+                  <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center shadow-md bg-white/10 text-white")}><Icon className="w-6 h-6" /></div>
                   <div className="relative w-10 h-10 flex items-center justify-center">
                     <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                      <path className="text-coffee-50" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="4" />
-                      <motion.path className={item.color} strokeDasharray="100, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" initial={{ pathLength: 0 }} animate={{ pathLength: item.pct / 100 }} transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 + (i * 0.1) }} />
+                      <path className="text-coffee-700" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="4" />
+                      <motion.path className="text-white" strokeDasharray="100, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" initial={{ pathLength: 0 }} animate={{ pathLength: item.pct / 100 }} transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 + (i * 0.1) }} />
                     </svg>
-                    <span className={cn("absolute text-[9px] font-black", item.color)}>{item.pct}%</span>
+                    <span className="absolute text-[9px] font-black text-white">{item.pct}%</span>
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-coffee-900 mb-0.5">{item.title}</h3>
-                  <div className="text-[10px] text-coffee-400 mb-1">Meta: {formatMoney(item.meta)}</div>
-                  <div className="flex items-end justify-between"><span className="text-lg font-black text-coffee-800 tracking-tight">{formatMoney(item.actual)}</span></div>
-                  <div className="h-2 w-full bg-coffee-50 rounded-full overflow-hidden mt-2"><motion.div initial={{ width: 0 }} animate={{ width: `${item.pct}%` }} transition={{ duration: 1.2, delay: 0.3 + (i * 0.1), ease: "easeOut" }} className={cn("h-full rounded-full", item.barColor)} /></div>
+                  <h3 className="text-sm font-bold text-white mb-0.5">{item.title}</h3>
+                  <div className="text-[10px] text-coffee-300 mb-1">Meta: {formatMoney(item.meta)}</div>
+                  <div className="flex items-end justify-between"><span className="text-lg font-black text-white tracking-tight">{formatMoney(item.actual)}</span></div>
+                  <div className="h-2 w-full bg-coffee-700/50 rounded-full overflow-hidden mt-2"><motion.div initial={{ width: 0 }} animate={{ width: `${item.pct}%` }} transition={{ duration: 1.2, delay: 0.3 + (i * 0.1), ease: "easeOut" }} className="h-full rounded-full bg-white/80" /></div>
                 </div>
               </motion.div>
             );
