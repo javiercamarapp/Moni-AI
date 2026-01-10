@@ -536,40 +536,35 @@ const AnalysisView = ({ onBack }: { onBack: () => void }) => {
           </motion.div>
 
           {/* Stats Grid - Estilo Dashboard */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2">
             <motion.div 
               initial={{ x: -20, opacity: 0 }} 
               animate={{ x: 0, opacity: 1 }} 
               transition={{ delay: 0.7 }}
-              className="bg-white rounded-2xl p-4 shadow-sm border border-coffee-100"
+              className="bg-white rounded-xl p-3 shadow-sm border border-coffee-100 flex items-center gap-2"
             >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-semibold text-coffee-500 uppercase tracking-wide">Sin Invertir</span>
-                <div className="w-8 h-8 rounded-lg bg-coffee-100 flex items-center justify-center">
-                  <ClockIcon />
-                </div>
+              <div className="w-7 h-7 rounded-lg bg-coffee-100 flex items-center justify-center flex-shrink-0">
+                <ClockIcon />
               </div>
-              <div className="text-2xl font-black text-coffee-800">51.4</div>
-              <div className="text-[10px] text-coffee-500 font-medium">años</div>
+              <div className="min-w-0">
+                <span className="text-[9px] font-medium text-coffee-500 uppercase block">Sin Invertir</span>
+                <div className="text-base font-black text-coffee-800 leading-tight">51.4 <span className="text-[9px] font-medium text-coffee-500">años</span></div>
+              </div>
             </motion.div>
 
             <motion.div 
               initial={{ x: 20, opacity: 0 }} 
               animate={{ x: 0, opacity: 1 }} 
               transition={{ delay: 0.8 }}
-              className="bg-gradient-to-br from-coffee-600 to-coffee-800 rounded-2xl p-4 shadow-lg relative overflow-hidden"
+              className="bg-gradient-to-br from-coffee-600 to-coffee-800 rounded-xl p-3 shadow-md flex items-center gap-2"
             >
-              <div className="absolute top-2 right-2 bg-white/20 backdrop-blur-sm px-2 py-0.5 rounded-full">
-                <span className="text-[9px] font-bold text-white">-36 años</span>
+              <div className="w-7 h-7 rounded-lg bg-white/15 flex items-center justify-center flex-shrink-0">
+                <SparklesIcon />
               </div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-semibold text-coffee-200 uppercase tracking-wide">Con Estrategia</span>
-                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
-                  <SparklesIcon />
-                </div>
+              <div className="min-w-0">
+                <span className="text-[9px] font-medium text-coffee-200 uppercase block">Con Estrategia</span>
+                <div className="text-base font-black text-white leading-tight">15.0 <span className="text-[9px] font-medium text-coffee-200">años</span></div>
               </div>
-              <div className="text-2xl font-black text-white">15.0</div>
-              <div className="text-[10px] text-coffee-200 font-medium">años</div>
             </motion.div>
           </div>
 
