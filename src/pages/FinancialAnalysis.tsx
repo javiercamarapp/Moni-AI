@@ -276,12 +276,12 @@ export default function FinancialAnalysis() {
       <div className="page-container">
 
         {/* Header */}
-        <div className="sticky top-0 z-20 bg-transparent backdrop-blur-sm py-4 flex justify-between items-center">
+        <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-sm py-4 flex justify-between items-center border-b border-gray-100">
           <div>
-            <h1 className="text-xl md:text-2xl font-black text-[#5D4037] tracking-tight">
+            <h1 className="text-lg font-bold text-gray-900 leading-tight">
               Análisis de tus finanzas
             </h1>
-            <p className="text-[#78716C] font-bold text-xs mt-1">
+            <p className="text-xs text-gray-500 font-medium mt-0.5">
               {format(subMonths(new Date(), 6), "MMMM yyyy", { locale: es })} - {format(new Date(), "MMMM yyyy", { locale: es })}
             </p>
           </div>
@@ -290,10 +290,10 @@ export default function FinancialAnalysis() {
             <button
               onClick={() => setShowExportMenu(!showExportMenu)}
               disabled={isExporting !== null}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-full shadow-md border transition-all duration-200 active:scale-95 ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-full shadow-sm border transition-all duration-200 active:scale-95 ${
                 showExportMenu || isExporting
-                  ? 'bg-[#292524] text-white border-[#292524]'
-                  : 'bg-white text-[#57534E] border-stone-200 hover:bg-[#F5F5F4] hover:text-[#292524] hover:shadow-lg'
+                  ? 'bg-gray-900 text-white border-gray-900'
+                  : 'bg-white text-gray-700 border-gray-100 hover:bg-gray-50 hover:shadow-md'
               }`}
               aria-label="Opciones de exportación"
             >
@@ -306,27 +306,27 @@ export default function FinancialAnalysis() {
             </button>
 
             {showExportMenu && (
-              <div className="absolute right-0 top-12 bg-white rounded-2xl shadow-xl border border-stone-100 p-1.5 min-w-[170px] z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
-                <p className="px-3 py-1.5 text-[10px] font-bold text-[#A8A29E] uppercase tracking-wider">Exportar reporte</p>
+              <div className="absolute right-0 top-12 bg-white rounded-2xl shadow-xl border border-gray-100 p-1.5 min-w-[170px] z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+                <p className="px-3 py-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Exportar reporte</p>
                 <button
                   onClick={handleExportCSV}
-                  className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-[#F5F5F4] rounded-xl text-sm font-bold text-[#57534E] transition-colors text-left group"
+                  className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-gray-50 rounded-xl text-sm font-bold text-gray-700 transition-colors text-left group"
                 >
                   <div className="flex items-center gap-3">
-                    <Table size={16} className="text-[#78716C] group-hover:text-[#292524] transition-colors" />
+                    <Table size={16} className="text-gray-500 group-hover:text-gray-900 transition-colors" />
                     <span>CSV</span>
                   </div>
-                  {isExporting === 'csv' && <Loader2 size={14} className="animate-spin text-[#292524]" />}
+                  {isExporting === 'csv' && <Loader2 size={14} className="animate-spin text-gray-900" />}
                 </button>
                 <button
                   onClick={handleExportPDF}
-                  className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-[#F5F5F4] rounded-xl text-sm font-bold text-[#57534E] transition-colors text-left group"
+                  className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-gray-50 rounded-xl text-sm font-bold text-gray-700 transition-colors text-left group"
                 >
                   <div className="flex items-center gap-3">
-                    <FileText size={16} className="text-[#78716C] group-hover:text-[#292524] transition-colors" />
+                    <FileText size={16} className="text-gray-500 group-hover:text-gray-900 transition-colors" />
                     <span>PDF</span>
                   </div>
-                  {isExporting === 'pdf' && <Loader2 size={14} className="animate-spin text-[#292524]" />}
+                  {isExporting === 'pdf' && <Loader2 size={14} className="animate-spin text-gray-900" />}
                 </button>
               </div>
             )}
