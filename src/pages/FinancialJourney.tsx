@@ -512,15 +512,28 @@ const AnalysisView = ({ onBack }: { onBack: () => void }) => {
         </motion.div>
 
         <div className="space-y-4 pt-4 border-t border-coffee-200">
-          <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.6 }} className="bg-white rounded-3xl p-5 relative overflow-hidden shadow-sm border border-coffee-100 text-center flex flex-col items-center">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-coffee-100/50 rounded-full blur-3xl -translate-y-10 translate-x-10 pointer-events-none"></div>
-            <motion.h3
-              initial={{ scale: 0.95 }} animate={{ scale: 1.05 }} transition={{ repeat: Infinity, repeatType: "reverse", duration: 1.5 }}
-              className="text-sm font-bold mb-2 flex items-center gap-2 text-coffee-900 text-center justify-center"
-            >
-              👋 ¡Excelente progreso!
-            </motion.h3>
-            <p className="text-xs text-coffee-600 leading-relaxed font-medium">Tienes una meta de <span className="font-bold text-coffee-900">$122M</span>. Ahorrando sin invertir tardarías <span className="font-bold text-red-500">51.4 años</span>. El interés compuesto puede reducir esto drásticamente.</p>
+          <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.6 }} className="bg-gradient-to-br from-coffee-800 to-coffee-900 rounded-[2rem] p-6 relative overflow-hidden shadow-xl border border-coffee-700/30">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-coffee-600/20 rounded-full blur-3xl -translate-y-16 translate-x-16 pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-coffee-500/10 rounded-full blur-2xl translate-y-10 -translate-x-10 pointer-events-none"></div>
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center">
+                  <span className="text-2xl">🎯</span>
+                </div>
+                <div className="text-left">
+                  <motion.h3
+                    initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.7 }}
+                    className="text-base font-black text-white leading-tight"
+                  >
+                    ¡Excelente progreso!
+                  </motion.h3>
+                  <p className="text-[10px] text-coffee-300 font-medium">Tu camino hacia la libertad financiera</p>
+                </div>
+              </div>
+              <p className="text-sm text-coffee-100 leading-relaxed font-medium">
+                Meta: <span className="font-black text-white">$122M</span>. Sin invertir tardarías <span className="font-black text-red-300">51.4 años</span>. El interés compuesto puede reducir esto drásticamente.
+              </p>
+            </div>
           </motion.div>
           <div className="grid grid-cols-2 gap-3">
             <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.7 }} className="bg-white border border-coffee-100 rounded-2xl px-4 flex flex-row items-center justify-between h-16 relative overflow-hidden shadow-sm group hover:bg-coffee-50 transition-colors">
