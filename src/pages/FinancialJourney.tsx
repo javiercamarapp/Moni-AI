@@ -511,24 +511,24 @@ const AnalysisView = ({ onBack }: { onBack: () => void }) => {
           </div>
         </motion.div>
 
-        <div className="space-y-4 pt-4 border-t border-coffee-100/50">
-          <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.6 }} className="bg-coffee-100 rounded-3xl p-5 relative overflow-hidden shadow-sm border border-coffee-200 text-center flex flex-col items-center">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/40 rounded-full blur-3xl -translate-y-10 translate-x-10 pointer-events-none"></div>
+        <div className="space-y-4 pt-4 border-t border-coffee-200">
+          <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.6 }} className="bg-white rounded-3xl p-5 relative overflow-hidden shadow-sm border border-coffee-100 text-center flex flex-col items-center">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-coffee-100/50 rounded-full blur-3xl -translate-y-10 translate-x-10 pointer-events-none"></div>
             <motion.h3
               initial={{ scale: 0.95 }} animate={{ scale: 1.05 }} transition={{ repeat: Infinity, repeatType: "reverse", duration: 1.5 }}
               className="text-sm font-bold mb-2 flex items-center gap-2 text-coffee-900 text-center justify-center"
             >
               👋 ¡Excelente progreso!
             </motion.h3>
-            <p className="text-xs text-coffee-700 leading-relaxed font-medium">Tienes una meta de <span className="font-bold text-coffee-900">$122M</span>. Ahorrando sin invertir tardarías <span className="font-bold text-red-500">51.4 años</span>. El interés compuesto puede reducir esto drásticamente.</p>
+            <p className="text-xs text-coffee-600 leading-relaxed font-medium">Tienes una meta de <span className="font-bold text-coffee-900">$122M</span>. Ahorrando sin invertir tardarías <span className="font-bold text-red-500">51.4 años</span>. El interés compuesto puede reducir esto drásticamente.</p>
           </motion.div>
           <div className="grid grid-cols-2 gap-3">
-            <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.7 }} className="bg-coffee-200/50 border border-coffee-200 rounded-2xl px-4 flex flex-row items-center justify-between h-16 relative overflow-hidden shadow-sm group hover:bg-coffee-200 transition-colors">
-              <div className="flex flex-col items-start justify-center"><div className="text-[8px] font-bold text-coffee-500 uppercase tracking-widest leading-none mb-1">Sin Invertir</div><div className="text-lg font-black text-coffee-800 leading-none">51.4 <span className="text-[9px] font-bold text-coffee-600">años</span></div></div>
+            <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.7 }} className="bg-white border border-coffee-100 rounded-2xl px-4 flex flex-row items-center justify-between h-16 relative overflow-hidden shadow-sm group hover:bg-coffee-50 transition-colors">
+              <div className="flex flex-col items-start justify-center"><div className="text-[8px] font-bold text-coffee-500 uppercase tracking-widest leading-none mb-1">Sin Invertir</div><div className="text-lg font-black text-coffee-800 leading-none">51.4 <span className="text-[9px] font-bold text-coffee-500">años</span></div></div>
               <div className="text-coffee-400"><ClockIcon /></div>
             </motion.div>
-            <motion.div initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.8 }} className="bg-[#A3B899] rounded-2xl px-4 flex flex-row items-center justify-between h-16 relative overflow-hidden shadow-md group hover:bg-[#96AA8C] transition-colors cursor-pointer">
-              <div className="flex flex-col items-start justify-center z-10"><div className="text-[8px] font-bold text-white/90 uppercase tracking-widest leading-none mb-1">Con Estrategia</div><div className="text-lg font-black text-white leading-none">15.0 <span className="text-[9px] font-bold text-white/70">años</span></div></div>
+            <motion.div initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.8 }} className="bg-coffee-700 rounded-2xl px-4 flex flex-row items-center justify-between h-16 relative overflow-hidden shadow-md group hover:bg-coffee-600 transition-colors cursor-pointer">
+              <div className="flex flex-col items-start justify-center z-10"><div className="text-[8px] font-bold text-coffee-200 uppercase tracking-widest leading-none mb-1">Con Estrategia</div><div className="text-lg font-black text-white leading-none">15.0 <span className="text-[9px] font-bold text-coffee-200">años</span></div></div>
               <div className="text-white z-10"><SparklesIcon /></div>
               <div className="absolute top-0 right-0 bg-white/20 px-2 py-0.5 rounded-bl-lg"><p className="text-[7px] font-bold text-white">Ahorras 36a</p></div>
             </motion.div>
@@ -536,10 +536,10 @@ const AnalysisView = ({ onBack }: { onBack: () => void }) => {
           <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.9 }} className="pb-6">
             <CompoundInterestChart />
           </motion.div>
-          <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1.0 }} className="bg-yellow-50 border border-yellow-200 rounded-2xl px-4 h-20 flex flex-col justify-center shadow-sm relative overflow-hidden">
-            <div className="flex items-center gap-2 mb-1"><span className="text-lg">⏳</span><span className="text-[10px] font-bold text-yellow-800 uppercase tracking-wider">Ahorro de tiempo</span></div>
-            <div className="text-lg font-black text-yellow-900 leading-none">¡37.4 años menos!</div>
-            <p className="text-[9px] text-yellow-700 font-medium mt-1">El precio de la inacción es alto.</p>
+          <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1.0 }} className="bg-coffee-100 border border-coffee-200 rounded-2xl px-4 h-20 flex flex-col justify-center shadow-sm relative overflow-hidden">
+            <div className="flex items-center gap-2 mb-1"><span className="text-lg">⏳</span><span className="text-[10px] font-bold text-coffee-700 uppercase tracking-wider">Ahorro de tiempo</span></div>
+            <div className="text-lg font-black text-coffee-900 leading-none">¡37.4 años menos!</div>
+            <p className="text-[9px] text-coffee-600 font-medium mt-1">El precio de la inacción es alto.</p>
           </motion.div>
         </div>
       </div>
