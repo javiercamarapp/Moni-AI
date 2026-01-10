@@ -62,10 +62,10 @@ export const ChallengeDetailsModal = ({
     const xpIconColor = isDarkTheme ? 'text-amber-300' : 'text-amber-600';
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pb-24 sm:pb-4">
             <div className="absolute inset-0 bg-[#292524]/60 backdrop-blur-md transition-opacity animate-in fade-in duration-200" onClick={onClose} />
 
-            <div className={`relative w-full max-w-sm rounded-[2.5rem] shadow-2xl overflow-hidden bg-[#FAFAF9] animate-in zoom-in-95 duration-300 flex flex-col max-h-[90vh]`}>
+            <div className={`relative w-full max-w-sm rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl overflow-hidden bg-[#FAFAF9] animate-in zoom-in-95 duration-300 flex flex-col max-h-[75vh] sm:max-h-[90vh]`}>
 
                 {/* Header Area with Theme Background */}
                 <div className={`relative px-6 pt-8 pb-16 ${theme.bg}`}>
