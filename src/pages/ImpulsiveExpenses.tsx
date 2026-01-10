@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, AlertCircle, Calendar, CreditCard } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -73,20 +72,18 @@ export default function ImpulsiveExpenses() {
   return (
     <div className="page-standard min-h-screen pb-24">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#f5f0ee]/80 to-transparent backdrop-blur-sm">
+      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-100">
         <div className="page-container py-4">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleBack}
-              className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={handleBack} 
+              className="w-10 h-10 bg-white rounded-full shadow-sm border border-gray-100 flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all text-gray-700 flex-shrink-0"
             >
-              <ArrowLeft className="h-4 w-4 text-gray-700" />
-            </Button>
+              <ArrowLeft className="w-5 h-5" />
+            </button>
             <div className="flex-1 min-w-0">
-              <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">Compras Impulsivas</h1>
-              <p className="text-sm text-gray-500">Gastos inusuales y superiores al promedio</p>
+              <h1 className="text-lg font-bold text-gray-900 leading-tight truncate">Compras Impulsivas</h1>
+              <p className="text-xs text-gray-500 font-medium truncate">Gastos inusuales y superiores al promedio</p>
             </div>
           </div>
         </div>
