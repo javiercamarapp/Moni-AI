@@ -902,12 +902,12 @@ const Balance = () => {
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/dashboard')}
-              className="w-9 h-9 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm hover:shadow-md transition-all active:scale-95 text-[#5D4037]/70"
+              className="w-10 h-10 bg-white rounded-full shadow-sm border border-gray-100 flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all text-gray-700"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
             <div className="flex flex-col">
-              <h1 className="text-base sm:text-lg font-bold text-gray-900 mb-1">Resumen de balance</h1>
+              <h1 className="text-lg font-bold text-gray-900">Resumen de balance</h1>
 
               {/* Date Selector */}
               <div className="flex items-center gap-2 text-gray-500">

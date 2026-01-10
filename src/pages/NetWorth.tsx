@@ -223,16 +223,16 @@ const NetWorth: React.FC = () => {
       {/* Brown Background Header - Portfolio Style */}
       <div className="bg-[#5D4037] pb-32 pt-6 px-6 rounded-b-[40px] shadow-lg relative z-0">
         <div className="max-w-5xl mx-auto">
-          <div className="flex items-center gap-4 mb-6">
+          <div className="flex items-center gap-3 mb-6">
             <button
               onClick={() => navigate('/dashboard')}
-              className="h-10 w-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center text-[#5D4037] hover:bg-white shadow-sm hover:shadow-md transition-all"
+              className="w-10 h-10 bg-white/90 rounded-full shadow-sm border border-white/20 flex items-center justify-center hover:bg-white active:scale-95 transition-all text-[#5D4037]"
             >
               <ArrowLeft size={20} />
             </button>
             <div>
-              <p className="text-[10px] text-[#D7CCC8] font-bold uppercase tracking-widest">Patrimonio Neto</p>
-              <h1 className="text-3xl font-bold tracking-tight text-white">
+              <p className="text-xs text-white/70 font-medium">Patrimonio Neto</p>
+              <h1 className="text-2xl font-bold tracking-tight text-white">
                 ${currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </h1>
             </div>
