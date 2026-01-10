@@ -224,11 +224,11 @@ const CompoundInterestChart = () => {
   const EFFECTIVE_HEIGHT = HEIGHT - PADDING_TOP - PADDING_BOTTOM;
 
   const scenarios = [
-    { label: 'ETFs', rate: 0.12, color: '#22D3EE', tailColor: 'text-cyan-400' },
-    { label: 'S&P 500', rate: 0.10, color: '#A78BFA', tailColor: 'text-purple-400' },
-    { label: 'Tu Estrategia', rate: 0.09, color: '#A3E635', tailColor: 'text-lime-400', isHighlight: true },
-    { label: 'CETES', rate: 0.06, color: '#FACC15', tailColor: 'text-yellow-400' },
-    { label: 'Solo Ahorro', rate: 0.00, color: '#F87171', tailColor: 'text-red-400' },
+    { label: 'ETFs', rate: 0.12, color: '#78350f', tailColor: 'text-coffee-900' },
+    { label: 'S&P 500', rate: 0.10, color: '#92400e', tailColor: 'text-coffee-800' },
+    { label: 'Tu Estrategia', rate: 0.09, color: '#b45309', tailColor: 'text-coffee-700', isHighlight: true },
+    { label: 'CETES', rate: 0.06, color: '#d97706', tailColor: 'text-coffee-600' },
+    { label: 'Solo Ahorro', rate: 0.00, color: '#f59e0b', tailColor: 'text-coffee-500' },
   ];
 
   const calculateFV = (rate: number, years: number) => {
@@ -285,26 +285,26 @@ const CompoundInterestChart = () => {
   }).reverse();
 
   return (
-    <div className="w-full bg-coffee-900 rounded-[2rem] p-5 text-white shadow-2xl relative overflow-hidden">
-      <div className="flex items-start justify-between mb-6">
+    <div className="w-full">
+      <div className="flex items-start justify-between mb-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <TrendingUpIcon />
-            <h3 className="font-bold text-lg leading-none">Cálculo de Interés</h3>
+            <div className="text-coffee-700"><TrendingUpIcon /></div>
+            <h3 className="font-bold text-sm text-coffee-900 leading-none">Cálculo de Interés</h3>
           </div>
-          <p className="text-[10px] text-coffee-200 opacity-80">Proyección basada en tus $175,950/mes</p>
+          <p className="text-[10px] text-coffee-500">Proyección basada en tus $175,950/mes</p>
         </div>
       </div>
-      <div className="flex flex-wrap gap-x-4 gap-y-2 mb-6 px-1">
+      <div className="flex flex-wrap gap-x-3 gap-y-1 mb-4">
         {scenarios.map(s => (
-          <div key={s.label} className="flex items-center gap-1.5">
+          <div key={s.label} className="flex items-center gap-1">
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: s.color }}></div>
-            <span className={cn("text-[9px] font-bold", s.tailColor)}>{s.label}</span>
+            <span className={cn("text-[9px] font-semibold", s.tailColor)}>{s.label}</span>
           </div>
         ))}
       </div>
-      <div className="flex gap-2 h-[220px]"> {/* Fixed height container */}
-        <div className="flex flex-col justify-between text-[8px] text-coffee-300 font-bold opacity-60 py-5 h-full w-8 text-right">
+      <div className="flex gap-2 h-[180px]">
+        <div className="flex flex-col justify-between text-[8px] text-coffee-400 font-medium py-4 h-full w-8 text-right">
           {yLabels.map((label, i) => (
             <span key={i}>{label}</span>
           ))}
@@ -316,24 +316,24 @@ const CompoundInterestChart = () => {
           onMouseMove={handleTouch} onMouseLeave={() => setScrubX(null)}
         >
           <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} preserveAspectRatio="none" className="absolute inset-0 w-full h-full pointer-events-none overflow-visible">
-            {/* Grid Lines matched to labels */}
+            {/* Grid Lines */}
             {[0, 0.25, 0.5, 0.75, 1].map(pct => {
               const y = (HEIGHT - PADDING_BOTTOM) - (pct * EFFECTIVE_HEIGHT);
               return (
-                <line key={pct} x1="0" y1={y} x2="100" y2={y} stroke="white" strokeWidth="0.2" opacity="0.1" strokeDasharray="2 2" />
+                <line key={pct} x1="0" y1={y} x2="100" y2={y} stroke="#d4a574" strokeWidth="0.3" opacity="0.3" strokeDasharray="2 2" />
               );
             })}
 
             {scenarios.map((s, i) => (
-              <motion.path key={s.label} d={getPath(s.label)} fill="none" stroke={s.color} strokeWidth={s.isHighlight ? "1.5" : "0.8"} strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, delay: i * 0.1, ease: "easeOut" }} />
+              <motion.path key={s.label} d={getPath(s.label)} fill="none" stroke={s.color} strokeWidth={s.isHighlight ? "1.8" : "1"} strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, delay: i * 0.15, ease: "easeOut" }} />
             ))}
           </svg>
           <AnimatePresence>
             {(scrubX !== null) && (
               <div className="absolute inset-0 pointer-events-none">
-                <motion.div className="absolute top-0 bottom-0 w-px bg-white/50 z-10" style={{ left: `${(scrubX) * 100}%` }} />
-                <div className={cn("absolute z-20 bg-black/80 backdrop-blur-md p-3 rounded-xl border border-white/10 shadow-2xl transition-all duration-75 min-w-[120px]", scrubX > 0.55 ? "right-[5%] left-auto" : "left-[5%] right-auto")} style={{ top: '10%' }}>
-                  <div className="text-[10px] font-black text-coffee-200 uppercase mb-2 border-b border-white/10 pb-1">Año {currentYear}</div>
+                <motion.div className="absolute top-0 bottom-0 w-px bg-coffee-400/50 z-10" style={{ left: `${(scrubX) * 100}%` }} />
+                <div className={cn("absolute z-20 bg-white/95 backdrop-blur-md p-3 rounded-xl border border-coffee-200 shadow-lg transition-all duration-75 min-w-[120px]", scrubX > 0.55 ? "right-[5%] left-auto" : "left-[5%] right-auto")} style={{ top: '10%' }}>
+                  <div className="text-[10px] font-bold text-coffee-700 uppercase mb-2 border-b border-coffee-100 pb-1">Año {currentYear}</div>
                   <div className="space-y-1.5">
                     {[...scenarios].sort((a, b) => {
                       const valA = points[a.label]?.[currentYear]?.value || 0;
@@ -343,8 +343,8 @@ const CompoundInterestChart = () => {
                       const val = points[s.label][currentYear]?.value || 0;
                       return (
                         <div key={s.label} className="flex items-center justify-between gap-3 text-[10px]">
-                          <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: s.color }}></div><span className="text-white/80 font-medium">{s.label}</span></div>
-                          <span className="font-bold text-white tabular-nums">{fNum(val)}</span>
+                          <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: s.color }}></div><span className="text-coffee-600 font-medium">{s.label}</span></div>
+                          <span className="font-bold text-coffee-900 tabular-nums">{fNum(val)}</span>
                         </div>
                       )
                     })}
@@ -353,14 +353,14 @@ const CompoundInterestChart = () => {
                 {scenarios.map(s => {
                   const pt = points[s.label][currentYear];
                   if (!pt) return null;
-                  return <motion.div key={s.label} className="absolute w-2.5 h-2.5 rounded-full border-2 border-coffee-900 z-10 shadow-sm" style={{ backgroundColor: s.color, left: `${(currentYear / YEARS) * 100}%`, top: `${(pt.y / HEIGHT) * 100}%`, marginTop: -5, marginLeft: -5 }} />
+                  return <motion.div key={s.label} className="absolute w-2.5 h-2.5 rounded-full border-2 border-white z-10 shadow-sm" style={{ backgroundColor: s.color, left: `${(currentYear / YEARS) * 100}%`, top: `${(pt.y / HEIGHT) * 100}%`, marginTop: -5, marginLeft: -5 }} />
                 })}
               </div>
             )}
           </AnimatePresence>
         </div>
       </div>
-      <div className="flex justify-between mt-2 text-[9px] text-coffee-300 font-bold opacity-60 px-1 ml-8">
+      <div className="flex justify-between mt-2 text-[9px] text-coffee-400 font-medium ml-8">
         <span>Año 0</span><span>Año 5</span><span>Año 10</span><span>Año 15</span><span>Año 20</span><span>Año 25</span>
       </div>
     </div>
@@ -568,39 +568,14 @@ const AnalysisView = ({ onBack }: { onBack: () => void }) => {
             </motion.div>
           </div>
 
-          {/* Chart Section with Animated Background */}
+          {/* Chart Section - Fondo blanco */}
           <motion.div 
             initial={{ y: 30, opacity: 0 }} 
             animate={{ y: 0, opacity: 1 }} 
             transition={{ delay: 0.9 }}
-            className="bg-gradient-to-br from-coffee-800 via-coffee-700 to-coffee-900 rounded-2xl p-4 shadow-lg relative overflow-hidden"
+            className="bg-white rounded-2xl p-4 shadow-sm border border-coffee-100"
           >
-            {/* Animated Background Elements */}
-            <motion.div 
-              className="absolute inset-0 opacity-20"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.15 }}
-              transition={{ duration: 1 }}
-            >
-              <motion.div 
-                className="absolute top-0 right-0 w-32 h-32 bg-coffee-400 rounded-full blur-3xl"
-                animate={{ x: [0, 10, 0], y: [0, -10, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              />
-              <motion.div 
-                className="absolute bottom-0 left-0 w-24 h-24 bg-coffee-300 rounded-full blur-2xl"
-                animate={{ x: [0, -10, 0], y: [0, 10, 0] }}
-                transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-              />
-              <motion.div 
-                className="absolute top-1/2 left-1/2 w-40 h-40 bg-coffee-500 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-              />
-            </motion.div>
-            <div className="relative z-10">
-              <CompoundInterestChart />
-            </div>
+            <CompoundInterestChart />
           </motion.div>
 
           {/* Bottom CTA Card - Más compacto */}
