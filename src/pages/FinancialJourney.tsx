@@ -625,32 +625,20 @@ const FinancialJourney: React.FC = () => {
     completeTutorial();
   };
 
-  // Track if we've already scrolled to prevent multiple scroll attempts
-  const hasScrolledRef = useRef(false);
-
-  // Scroll to current level ONCE after everything is ready
+  // Scroll to current level ALWAYS when entering roadmap view
   useEffect(() => {
-    const isDataReady = currentLevel > 1 && STATIC_POSITIONS.length > 0 && containerWidth > 0;
-    const shouldScroll = (tutorialStep === 0 || tutorialStep === 3) && currentView === 'roadmap' && isDataReady && !hasScrolledRef.current;
-
-    if (shouldScroll && currentLevelRef.current) {
-      hasScrolledRef.current = true;
-      // Longer delay to ensure DOM is fully rendered
-      const timer = setTimeout(() => {
-        if (currentLevelRef.current) {
-          currentLevelRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      }, 300);
-      return () => clearTimeout(timer);
-    }
-  }, [currentLevel, tutorialStep, currentView, STATIC_POSITIONS.length, containerWidth]);
-
-  // Reset scroll flag when view changes to allow re-scrolling when returning to roadmap
-  useEffect(() => {
-    if (currentView !== 'roadmap') {
-      hasScrolledRef.current = false;
-    }
-  }, [currentView]);
+    if (currentView !== 'roadmap') return;
+    if (STATIC_POSITIONS.length === 0 || containerWidth === 0) return;
+    
+    // Use a longer delay to ensure everything is rendered
+    const timer = setTimeout(() => {
+      if (currentLevelRef.current) {
+        currentLevelRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, [currentView, STATIC_POSITIONS.length, containerWidth]);
 
   // Fetch Net Worth Data
   const { data: allNetWorthData } = useNetWorth('All');
