@@ -38,9 +38,9 @@ const BudgetMonthlySummary: React.FC<BudgetMonthlySummaryProps> = ({
                     <div className="flex items-center justify-between mb-5">
                         {/* Left: Available Amount */}
                         <div className="flex flex-col">
-                            <span className="text-4xl font-black text-[#5D4037] tracking-tight">
-                                ${available.toLocaleString()}
-                            </span>
+                        <span className="text-2xl sm:text-3xl md:text-4xl font-black text-[#5D4037] tracking-tight">
+                            ${available.toLocaleString()}
+                        </span>
                             <span className="text-xs font-medium text-[#5D4037]/60 mt-0.5">Disponible</span>
                         </div>
 
