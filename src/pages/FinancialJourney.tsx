@@ -401,9 +401,14 @@ const AnalysisView = ({ onBack }: { onBack: () => void }) => {
 
   return (
     <div className="flex flex-col h-full bg-gradient-to-b from-coffee-50 to-white overflow-y-auto no-scrollbar relative max-w-5xl mx-auto w-full">
-      <div className="absolute top-0 left-0 w-full z-50 px-5 py-6 flex items-center gap-4 pointer-events-none max-w-5xl mx-auto">
-        <button onClick={onBack} className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full shadow-md border border-coffee-100 flex items-center justify-center hover:bg-white active:scale-95 transition-all text-coffee-800 pointer-events-auto"><ArrowLeftIcon /></button>
-        <div className="flex flex-col pt-2 pointer-events-auto"><h1 className="text-xl font-black text-coffee-900 leading-tight">Análisis de Aspiraciones</h1><p className="text-xs text-coffee-500 font-medium">Compara tu progreso financiero</p></div>
+      <div className="absolute top-0 left-0 w-full z-50 px-5 py-5 flex items-center gap-3 pointer-events-none max-w-5xl mx-auto">
+        <button onClick={onBack} className="w-10 h-10 bg-white rounded-full shadow-sm border border-gray-100 flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all text-gray-700 pointer-events-auto">
+          <ArrowLeftIcon />
+        </button>
+        <div className="flex flex-col pointer-events-auto">
+          <h1 className="text-lg font-bold text-gray-900 leading-tight">Análisis de Aspiraciones</h1>
+          <p className="text-xs text-gray-500 font-medium">Compara tu progreso financiero</p>
+        </div>
       </div>
       <div className="px-5 pb-24 space-y-6 pt-24 animate-fade-in">
         <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex flex-col items-center justify-center py-4">
