@@ -1129,11 +1129,11 @@ const Dashboard = () => {
 
         {/* Header with remaining amount and buttons */}
         <header className="relative z-20 px-6 lg:max-w-5xl lg:mx-auto py-2 pt-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-3">
             {/* Remaining Amount - Inline Format */}
-            <div className="cursor-pointer group flex items-center gap-2" onClick={() => navigate('/budgets')}>
-              <span className="text-base text-white/90 font-semibold">Presupuesto disponible:</span>
-              <span className="text-xl font-bold text-white group-hover:text-white/90 transition-colors">
+            <div className="cursor-pointer group flex items-center gap-1 sm:gap-2 min-w-0 flex-1" onClick={() => navigate('/budgets')}>
+              <span className="text-xs sm:text-base text-white/90 font-semibold whitespace-nowrap">Presupuesto:</span>
+              <span className="text-base sm:text-xl font-bold text-white group-hover:text-white/90 transition-colors truncate">
                 {new Intl.NumberFormat('es-MX', {
                   style: 'currency',
                   currency: 'MXN',
@@ -1141,11 +1141,11 @@ const Dashboard = () => {
                   maximumFractionDigits: 0
                 }).format(Math.max(0, totalBudget - currentMonthExpenses))}
               </span>
-              <span className="text-white/70 group-hover:text-white/90 transition-colors text-xl">›</span>
+              <span className="text-white/70 group-hover:text-white/90 transition-colors text-lg sm:text-xl">›</span>
             </div>
 
             {/* Buttons */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-shrink-0">
               <div className="relative">
                 <button onClick={() => navigate("/notifications")} className="inline-flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white h-7 w-7 shadow-sm transition-all border border-white/20">
                   <Bell className="h-3.5 w-3.5" />
