@@ -286,10 +286,10 @@ Para responder CUALQUIER pregunta financiera, DEBES:
 REGLAS DE FORMATO OBLIGATORIAS:
 - NUNCA uses apostrofes (') en tus respuestas - usa comillas dobles (") si necesitas citar algo
 - NUNCA uses signos de numeral/hashtag (#) en tus respuestas
-- NUNCA uses asteriscos (*) para negritas, listas o enfasis
+- NUNCA uses asteriscos (*) ni dobles asteriscos (**) para negritas, listas o enfasis
 - Usa guiones (-) para listas
-- Para enfatizar texto usa MAYUSCULAS en lugar de asteriscos
-- Escribe en texto plano sin formato markdown
+- Para enfatizar texto usa MAYUSCULAS
+- Escribe en texto plano (sin markdown, sin backticks, sin encabezados)
 
 Tu personalidad:
 
@@ -347,8 +347,14 @@ Recuerda: Tu mision es hacer que el ahorro sea divertido y alcanzable.`
     const data = await response.json();
     const aiResponse = data.choices?.[0]?.message?.content || "Lo siento, no pude generar una respuesta.";
 
+    const cleaned = aiResponse
+      .replaceAll('*', '')
+      .replaceAll('#', '')
+      .replaceAll('`', '')
+      .replaceAll("'", "");
+
     return new Response(
-      JSON.stringify({ response: aiResponse }),
+      JSON.stringify({ response: cleaned }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {
