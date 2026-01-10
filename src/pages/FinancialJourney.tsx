@@ -635,14 +635,22 @@ const FinancialJourney: React.FC = () => {
 
     if (shouldScroll && currentLevelRef.current) {
       hasScrolledRef.current = true;
+      // Longer delay to ensure DOM is fully rendered
       const timer = setTimeout(() => {
         if (currentLevelRef.current) {
           currentLevelRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-      }, 500);
+      }, 300);
       return () => clearTimeout(timer);
     }
   }, [currentLevel, tutorialStep, currentView, STATIC_POSITIONS.length, containerWidth]);
+
+  // Reset scroll flag when view changes to allow re-scrolling when returning to roadmap
+  useEffect(() => {
+    if (currentView !== 'roadmap') {
+      hasScrolledRef.current = false;
+    }
+  }, [currentView]);
 
   // Fetch Net Worth Data
   const { data: allNetWorthData } = useNetWorth('All');
