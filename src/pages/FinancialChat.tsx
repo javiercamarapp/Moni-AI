@@ -7,21 +7,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Waves } from '@/components/ui/waves-background';
 import BottomNav from '@/components/BottomNav';
 const SUGGESTIONS: Suggestion[] = [{
-  label: 'Valoración de Negocio',
-  subLabel: 'Métodos explicados',
-  prompt: 'Explica métodos comunes de valoración de negocios como DCF y Múltiplos para una pequeña empresa tecnológica.'
+  label: 'Mi Resumen',
+  subLabel: 'Este mes',
+  prompt: 'Dame un resumen de mis ingresos y gastos de este mes.'
 }, {
-  label: 'Financiación Startup',
-  subLabel: 'Oportunidades',
-  prompt: '¿Cuáles son las tendencias actuales en financiación de startups para 2024? Seed vs Series A.'
+  label: 'Ahorro',
+  subLabel: 'Consejos',
+  prompt: 'Dame consejos personalizados para ahorrar más basándote en mis gastos.'
 }, {
-  label: 'Flujo de Caja',
-  subLabel: 'Optimización',
-  prompt: '¿Cómo puedo optimizar el flujo de caja para un negocio minorista estacional?'
+  label: 'Presupuesto',
+  subLabel: 'Análisis',
+  prompt: 'Analiza cómo voy con mi presupuesto mensual y qué puedo mejorar.'
 }, {
-  label: 'Inversión Personal',
-  subLabel: 'Estrategias',
-  prompt: 'Crea una estrategia de inversión personal conservadora para crecimiento a largo plazo.'
+  label: 'Metas',
+  subLabel: 'Progreso',
+  prompt: 'Cómo voy con mis metas de ahorro y qué necesito hacer para alcanzarlas.'
 }];
 const FinancialChat = () => {
   const navigate = useNavigate();
@@ -373,13 +373,13 @@ const FinancialChat = () => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 relative w-full max-w-2xl mx-auto flex flex-col overflow-hidden pb-32">
+      <main className="flex-1 relative w-full max-w-2xl mx-auto flex flex-col overflow-hidden pb-32 pt-4">
 
         {/* IDLE STATE */}
         {appState === AppState.IDLE && <div className="flex-1" />}
 
         {/* CHATTING STATE */}
-        {appState === AppState.CHATTING && <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6 no-scrollbar">
+        {appState === AppState.CHATTING && <div className="flex-1 overflow-y-auto px-4 py-4 pt-8 space-y-6 no-scrollbar">
             {messages.map(msg => <motion.div key={msg.id} initial={{
           opacity: 0,
           y: 10
