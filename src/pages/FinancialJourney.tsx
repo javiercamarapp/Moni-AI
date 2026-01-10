@@ -847,8 +847,8 @@ const FinancialJourney: React.FC = () => {
           {/* Left: Title (no back button) */}
           <div className="flex items-center gap-3 pointer-events-auto">
             <div className="flex flex-col">
-              <h1 className="text-2xl font-black text-coffee-900 tracking-tight leading-none">Tu Viaje</h1>
-              <p className="text-xs text-coffee-600 font-medium">Libertad Financiera</p>
+              <h1 className="text-xl font-bold text-gray-900 tracking-tight leading-none">Tu Viaje</h1>
+              <p className="text-xs text-gray-500 font-medium">Libertad Financiera</p>
             </div>
           </div>
 

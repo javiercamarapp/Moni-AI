@@ -115,13 +115,13 @@ export default function Movimientos() {
             <Button
               variant="ghost"
               onClick={() => navigate('/dashboard')}
-              className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 p-0 flex-shrink-0"
+              className="w-10 h-10 bg-white rounded-full shadow-sm border border-gray-100 flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all text-gray-700 p-0"
             >
-              <ArrowLeft className="h-4 w-4 text-gray-700" />
+              <ArrowLeft className="h-5 w-5" />
             </Button>
             <div className="flex-1">
-              <h1 className="text-xl font-semibold text-gray-900 tracking-tight">Movimientos recientes</h1>
-              <p className="text-xs text-gray-600">Últimos 50 movimientos</p>
+              <h1 className="text-lg font-bold text-gray-900">Movimientos recientes</h1>
+              <p className="text-xs text-gray-500">Últimos 50 movimientos</p>
             </div>
           </div>
         </div>

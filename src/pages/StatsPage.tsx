@@ -145,11 +145,11 @@ const StatsPage = () => {
                         <div className="flex items-center gap-3 mb-6">
                             <button
                                 onClick={() => navigate('/retos')}
-                                className="p-2 -ml-2 rounded-full text-[#78716C] hover:bg-stone-100 transition-colors"
+                                className="w-10 h-10 bg-white rounded-full shadow-sm border border-gray-100 flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all text-gray-700"
                             >
-                                <ArrowLeft size={24} />
+                                <ArrowLeft size={20} />
                             </button>
-                            <h1 className="text-[#292524] text-xl font-extrabold tracking-tight">Mi Progreso</h1>
+                            <h1 className="text-lg font-bold text-gray-900">Mi Progreso</h1>
                         </div>
 
                         {/* League Card */}

@@ -201,20 +201,20 @@ const Ingresos = () => {
         {/* Header */}
         <div className="flex flex-col gap-4 mb-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <button
                 onClick={() => navigate(referrer === 'balance' ? '/balance' : '/dashboard')}
-                className="p-3 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors"
+                className="w-10 h-10 bg-white rounded-full shadow-sm border border-gray-100 flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all text-gray-700"
               >
-                <ArrowLeft className="w-5 h-5 text-gray-700" />
+                <ArrowLeft className="w-5 h-5" />
               </button>
 
               <div className="flex flex-col">
-                <h1 className={headingPage}>Ingresos</h1>
-                <div className="flex items-center gap-0.5 sm:gap-1 text-xs sm:text-sm text-gray-500 font-medium -ml-0.5">
-                  {viewMode === 'month' && <ChevronLeft onClick={handlePreviousPeriod} className="w-2.5 h-2.5 sm:w-3 sm:h-3 cursor-pointer" />}
+                <h1 className="text-lg font-bold text-gray-900">Ingresos</h1>
+                <div className="flex items-center gap-0.5 sm:gap-1 text-xs text-gray-500 font-medium">
+                  {viewMode === 'month' && <ChevronLeft onClick={handlePreviousPeriod} className="w-3 h-3 cursor-pointer" />}
                   <span className="animate-in fade-in duration-300 whitespace-nowrap">{getPeriodLabel()}</span>
-                  {viewMode === 'month' && <ChevronRight onClick={handleNextPeriod} className="w-2.5 h-2.5 sm:w-3 sm:h-3 cursor-pointer" />}
+                  {viewMode === 'month' && <ChevronRight onClick={handleNextPeriod} className="w-3 h-3 cursor-pointer" />}
                 </div>
               </div>
             </div>
