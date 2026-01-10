@@ -568,30 +568,55 @@ const AnalysisView = ({ onBack }: { onBack: () => void }) => {
             </motion.div>
           </div>
 
-          {/* Chart Section */}
+          {/* Chart Section with Animated Background */}
           <motion.div 
             initial={{ y: 30, opacity: 0 }} 
             animate={{ y: 0, opacity: 1 }} 
             transition={{ delay: 0.9 }}
-            className="bg-white rounded-2xl p-4 shadow-sm border border-coffee-100"
+            className="bg-gradient-to-br from-coffee-800 via-coffee-700 to-coffee-900 rounded-2xl p-4 shadow-lg relative overflow-hidden"
           >
-            <CompoundInterestChart />
+            {/* Animated Background Elements */}
+            <motion.div 
+              className="absolute inset-0 opacity-20"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.15 }}
+              transition={{ duration: 1 }}
+            >
+              <motion.div 
+                className="absolute top-0 right-0 w-32 h-32 bg-coffee-400 rounded-full blur-3xl"
+                animate={{ x: [0, 10, 0], y: [0, -10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <motion.div 
+                className="absolute bottom-0 left-0 w-24 h-24 bg-coffee-300 rounded-full blur-2xl"
+                animate={{ x: [0, -10, 0], y: [0, 10, 0] }}
+                transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <motion.div 
+                className="absolute top-1/2 left-1/2 w-40 h-40 bg-coffee-500 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              />
+            </motion.div>
+            <div className="relative z-10">
+              <CompoundInterestChart />
+            </div>
           </motion.div>
 
-          {/* Bottom CTA Card */}
+          {/* Bottom CTA Card - Más compacto */}
           <motion.div 
             initial={{ y: 20, opacity: 0 }} 
             animate={{ y: 0, opacity: 1 }} 
             transition={{ delay: 1.0 }}
-            className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-4 border border-amber-200/50 shadow-sm"
+            className="bg-gradient-to-r from-coffee-100 to-coffee-50 rounded-xl p-3 border border-coffee-200/50 shadow-sm"
           >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-md">
-                <span className="text-xl">⏳</span>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-coffee-500 to-coffee-700 flex items-center justify-center shadow-sm">
+                <span className="text-base">⏳</span>
               </div>
               <div className="flex-1">
-                <div className="text-lg font-black text-coffee-900">¡37.4 años menos!</div>
-                <p className="text-xs text-coffee-600">El precio de la inacción es alto.</p>
+                <div className="text-sm font-bold text-coffee-900">¡37.4 años menos!</div>
+                <p className="text-[10px] text-coffee-600">El precio de la inacción es alto.</p>
               </div>
             </div>
           </motion.div>
