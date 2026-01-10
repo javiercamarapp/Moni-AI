@@ -511,48 +511,94 @@ const AnalysisView = ({ onBack }: { onBack: () => void }) => {
           </div>
         </motion.div>
 
-        <div className="space-y-4 pt-4 border-t border-coffee-200">
-          <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.6 }} className="bg-gradient-to-br from-coffee-800 to-coffee-900 rounded-[2rem] p-6 relative overflow-hidden shadow-xl border border-coffee-700/30">
-            <div className="absolute top-0 right-0 w-40 h-40 bg-coffee-600/20 rounded-full blur-3xl -translate-y-16 translate-x-16 pointer-events-none"></div>
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-coffee-500/10 rounded-full blur-2xl translate-y-10 -translate-x-10 pointer-events-none"></div>
-            <div className="relative z-10">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center">
-                  <span className="text-2xl">🎯</span>
-                </div>
-                <div className="text-left">
-                  <motion.h3
-                    initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.7 }}
-                    className="text-base font-black text-white leading-tight"
-                  >
-                    ¡Excelente progreso!
-                  </motion.h3>
-                  <p className="text-[10px] text-coffee-300 font-medium">Tu camino hacia la libertad financiera</p>
-                </div>
+        <div className="space-y-3 pt-6">
+          {/* Header Card - Estilo Dashboard */}
+          <motion.div 
+            initial={{ y: 20, opacity: 0 }} 
+            animate={{ y: 0, opacity: 1 }} 
+            transition={{ delay: 0.6 }}
+            className="bg-white rounded-2xl p-4 shadow-sm border border-coffee-100"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-coffee-500 to-coffee-700 flex items-center justify-center shadow-md">
+                <span className="text-xl">🎯</span>
               </div>
-              <p className="text-sm text-coffee-100 leading-relaxed font-medium">
-                Meta: <span className="font-black text-white">$122M</span>. Sin invertir tardarías <span className="font-black text-red-300">51.4 años</span>. El interés compuesto puede reducir esto drásticamente.
+              <div className="flex-1">
+                <h3 className="text-sm font-bold text-coffee-900">¡Excelente progreso!</h3>
+                <p className="text-xs text-coffee-500">Tu camino hacia la libertad financiera</p>
+              </div>
+            </div>
+            <div className="mt-3 pt-3 border-t border-coffee-100">
+              <p className="text-xs text-coffee-600 leading-relaxed">
+                Meta: <span className="font-bold text-coffee-900">$122M</span> · Sin invertir: <span className="font-bold text-red-500">51.4 años</span> · El interés compuesto puede reducir esto drásticamente.
               </p>
             </div>
           </motion.div>
+
+          {/* Stats Grid - Estilo Dashboard */}
           <div className="grid grid-cols-2 gap-3">
-            <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.7 }} className="bg-white border border-coffee-100 rounded-2xl px-4 flex flex-row items-center justify-between h-16 relative overflow-hidden shadow-sm group hover:bg-coffee-50 transition-colors">
-              <div className="flex flex-col items-start justify-center"><div className="text-[8px] font-bold text-coffee-500 uppercase tracking-widest leading-none mb-1">Sin Invertir</div><div className="text-lg font-black text-coffee-800 leading-none">51.4 <span className="text-[9px] font-bold text-coffee-500">años</span></div></div>
-              <div className="text-coffee-400"><ClockIcon /></div>
+            <motion.div 
+              initial={{ x: -20, opacity: 0 }} 
+              animate={{ x: 0, opacity: 1 }} 
+              transition={{ delay: 0.7 }}
+              className="bg-white rounded-2xl p-4 shadow-sm border border-coffee-100"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-semibold text-coffee-500 uppercase tracking-wide">Sin Invertir</span>
+                <div className="w-8 h-8 rounded-lg bg-coffee-100 flex items-center justify-center">
+                  <ClockIcon />
+                </div>
+              </div>
+              <div className="text-2xl font-black text-coffee-800">51.4</div>
+              <div className="text-[10px] text-coffee-500 font-medium">años</div>
             </motion.div>
-            <motion.div initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.8 }} className="bg-coffee-700 rounded-2xl px-4 flex flex-row items-center justify-between h-16 relative overflow-hidden shadow-md group hover:bg-coffee-600 transition-colors cursor-pointer">
-              <div className="flex flex-col items-start justify-center z-10"><div className="text-[8px] font-bold text-coffee-200 uppercase tracking-widest leading-none mb-1">Con Estrategia</div><div className="text-lg font-black text-white leading-none">15.0 <span className="text-[9px] font-bold text-coffee-200">años</span></div></div>
-              <div className="text-white z-10"><SparklesIcon /></div>
-              <div className="absolute top-0 right-0 bg-white/20 px-2 py-0.5 rounded-bl-lg"><p className="text-[7px] font-bold text-white">Ahorras 36a</p></div>
+
+            <motion.div 
+              initial={{ x: 20, opacity: 0 }} 
+              animate={{ x: 0, opacity: 1 }} 
+              transition={{ delay: 0.8 }}
+              className="bg-gradient-to-br from-coffee-600 to-coffee-800 rounded-2xl p-4 shadow-lg relative overflow-hidden"
+            >
+              <div className="absolute top-2 right-2 bg-white/20 backdrop-blur-sm px-2 py-0.5 rounded-full">
+                <span className="text-[9px] font-bold text-white">-36 años</span>
+              </div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-semibold text-coffee-200 uppercase tracking-wide">Con Estrategia</span>
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                  <SparklesIcon />
+                </div>
+              </div>
+              <div className="text-2xl font-black text-white">15.0</div>
+              <div className="text-[10px] text-coffee-200 font-medium">años</div>
             </motion.div>
           </div>
-          <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.9 }} className="pb-6">
+
+          {/* Chart Section */}
+          <motion.div 
+            initial={{ y: 30, opacity: 0 }} 
+            animate={{ y: 0, opacity: 1 }} 
+            transition={{ delay: 0.9 }}
+            className="bg-white rounded-2xl p-4 shadow-sm border border-coffee-100"
+          >
             <CompoundInterestChart />
           </motion.div>
-          <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1.0 }} className="bg-coffee-100 border border-coffee-200 rounded-2xl px-4 h-20 flex flex-col justify-center shadow-sm relative overflow-hidden">
-            <div className="flex items-center gap-2 mb-1"><span className="text-lg">⏳</span><span className="text-[10px] font-bold text-coffee-700 uppercase tracking-wider">Ahorro de tiempo</span></div>
-            <div className="text-lg font-black text-coffee-900 leading-none">¡37.4 años menos!</div>
-            <p className="text-[9px] text-coffee-600 font-medium mt-1">El precio de la inacción es alto.</p>
+
+          {/* Bottom CTA Card */}
+          <motion.div 
+            initial={{ y: 20, opacity: 0 }} 
+            animate={{ y: 0, opacity: 1 }} 
+            transition={{ delay: 1.0 }}
+            className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-4 border border-amber-200/50 shadow-sm"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-md">
+                <span className="text-xl">⏳</span>
+              </div>
+              <div className="flex-1">
+                <div className="text-lg font-black text-coffee-900">¡37.4 años menos!</div>
+                <p className="text-xs text-coffee-600">El precio de la inacción es alto.</p>
+              </div>
+            </div>
           </motion.div>
         </div>
       </div>
