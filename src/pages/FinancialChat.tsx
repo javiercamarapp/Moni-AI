@@ -410,14 +410,14 @@ const FinancialChat = () => {
                 </button>)}
             </div>}
 
-          <div className="relative flex items-center gap-2 bg-coffee-100 p-1 rounded-3xl shadow-sm border border-coffee-200/50 transition-all duration-200">
+          <div className="relative flex items-center gap-2 bg-coffee-100 p-1 sm:p-2 rounded-3xl shadow-sm border border-coffee-200/50 transition-all duration-200">
             {/* Action Menu Button */}
-            <button onClick={() => setIsMenuOpen(true)} className="w-8 h-8 flex items-center justify-center rounded-full bg-coffee-200/50 text-coffee-700 hover:bg-coffee-300 transition-colors shrink-0">
+            <button onClick={() => setIsMenuOpen(true)} className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-coffee-200/50 text-coffee-700 hover:bg-coffee-300 transition-colors shrink-0">
               <PlusIcon />
             </button>
 
-            <textarea ref={textareaRef} value={input} onChange={e => setInput(e.target.value)} onKeyDown={handleKeyDown} placeholder="Pregunta lo que quieras" rows={1} className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none resize-none py-2 px-3 text-[15px] placeholder:text-coffee-400 text-coffee-900 max-h-24 leading-relaxed no-scrollbar" style={{
-            minHeight: '34px'
+            <textarea ref={textareaRef} value={input} onChange={e => setInput(e.target.value)} onKeyDown={handleKeyDown} placeholder="Pregunta lo que quieras" rows={1} className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none resize-none py-1 sm:py-2 px-2 sm:px-3 text-[14px] sm:text-[15px] placeholder:text-coffee-400 text-coffee-900 max-h-20 sm:max-h-24 leading-relaxed no-scrollbar" style={{
+            minHeight: '28px'
           }} />
 
             <div className="flex items-center gap-1 shrink-0">
