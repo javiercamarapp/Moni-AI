@@ -276,7 +276,7 @@ export default function FinancialAnalysis() {
       <div className="page-container">
 
         {/* Header */}
-        <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-sm py-4 flex justify-between items-center border-b border-gray-100">
+        <div className="sticky top-0 z-20 bg-transparent backdrop-blur-sm py-4 flex justify-between items-center">
           <div>
             <h1 className="text-lg font-bold text-gray-900 leading-tight">
               Análisis de tus finanzas
