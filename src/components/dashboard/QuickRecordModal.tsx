@@ -408,9 +408,9 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
 
               {!showAddCategory ? (
                 <div className="space-y-3">
-                  {/* Standard Categories - 2 rows of 3 */}
+                  {/* Standard Categories (5) + Add Button */}
                   <div className="grid grid-cols-6 gap-1.5">
-                    {standardCategories.map((cat) => (
+                    {standardCategories.slice(0, 5).map((cat) => (
                       <button
                         key={cat.id}
                         onClick={() => setSelectedCategoryId(cat.id)}
@@ -430,52 +430,52 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
                         </span>
                       </button>
                     ))}
-                  </div>
-
-                  {/* Custom Categories (if any) + Add Button - same grid */}
-                  <div className="grid grid-cols-6 gap-1.5">
-                    {customCategories.slice(0, 6).map((cat) => (
-                      <div key={cat.id} className="relative group flex flex-col items-center gap-0.5">
-                        <button
-                          onClick={() => setSelectedCategoryId(cat.id)}
-                          className="flex flex-col items-center"
-                        >
-                          <div className={`h-9 w-9 rounded-full flex items-center justify-center transition-all ${
-                            selectedCategoryId === cat.id
-                              ? `${selectedColor} text-white shadow-md`
-                              : 'bg-white text-[#8D6E63] border border-gray-100'
-                          }`}>
-                            {getCategoryIcon(cat.icon)}
-                          </div>
-                        </button>
-                        <span className={`text-[7px] font-semibold truncate w-full text-center ${
-                          selectedCategoryId === cat.id ? 'text-[#5D4037]' : 'text-gray-400'
-                        }`}>
-                          {cat.name}
-                        </span>
-                        {/* Delete button */}
-                        <button
-                          onClick={(e) => { e.stopPropagation(); handleDeleteCategory(cat.id); }}
-                          className="absolute -top-1.5 -right-0.5 h-4 w-4 bg-[#5D4037] text-white rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
-                        >
-                          <X size={10} />
-                        </button>
+                    
+                    {/* Add new category button */}
+                    <button
+                      onClick={() => setShowAddCategory(true)}
+                      className="flex flex-col items-center gap-0.5"
+                    >
+                      <div className="h-9 w-9 rounded-full bg-gradient-to-br from-[#8D6E63] to-[#5D4037] flex items-center justify-center shadow-md">
+                        <Plus size={16} className="text-white" />
                       </div>
-                    ))}
-
-                    {/* Add new category button - only show if less than 6 custom categories */}
-                    {customCategories.length < 6 && (
-                      <button
-                        onClick={() => setShowAddCategory(true)}
-                        className="flex flex-col items-center gap-0.5"
-                      >
-                        <div className="h-9 w-9 rounded-full bg-[#8D6E63]/10 flex items-center justify-center border border-dashed border-[#8D6E63]/40">
-                          <Plus size={14} className="text-[#8D6E63]" />
-                        </div>
-                        <span className="text-[7px] font-semibold text-[#8D6E63]">Nueva</span>
-                      </button>
-                    )}
+                      <span className="text-[7px] font-semibold text-[#8D6E63]">Añadir</span>
+                    </button>
                   </div>
+
+                  {/* Custom Categories (if any) */}
+                  {customCategories.length > 0 && (
+                    <div className="grid grid-cols-6 gap-1.5">
+                      {customCategories.slice(0, 6).map((cat) => (
+                        <div key={cat.id} className="relative group flex flex-col items-center gap-0.5">
+                          <button
+                            onClick={() => setSelectedCategoryId(cat.id)}
+                            className="flex flex-col items-center"
+                          >
+                            <div className={`h-9 w-9 rounded-full flex items-center justify-center transition-all ${
+                              selectedCategoryId === cat.id
+                                ? `${selectedColor} text-white shadow-md`
+                                : 'bg-white text-[#8D6E63] border border-gray-100'
+                            }`}>
+                              {getCategoryIcon(cat.icon)}
+                            </div>
+                          </button>
+                          <span className={`text-[7px] font-semibold truncate w-full text-center ${
+                            selectedCategoryId === cat.id ? 'text-[#5D4037]' : 'text-gray-400'
+                          }`}>
+                            {cat.name}
+                          </span>
+                          {/* Delete button */}
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleDeleteCategory(cat.id); }}
+                            className="absolute -top-1.5 -right-0.5 h-4 w-4 bg-[#5D4037] text-white rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
+                          >
+                            <X size={10} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ) : (
                 /* Add Category Form */
