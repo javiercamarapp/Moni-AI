@@ -14,6 +14,16 @@ import {
   Banknote,
   Building2,
   Zap,
+  GraduationCap,
+  PiggyBank,
+  Plane,
+  Baby,
+  Dog,
+  Smartphone,
+  ShoppingBag,
+  Coffee,
+  Dumbbell,
+  Music,
   type LucideIcon
 } from 'lucide-react';
 
@@ -44,7 +54,7 @@ export const STANDARD_INCOME_CATEGORIES: StandardCategory[] = [
   { id: 'std_otros', name: 'Otros', icon: 'Banknote', IconComponent: Banknote },
 ];
 
-// Icon mapping for dynamic rendering
+// Icon mapping for dynamic rendering - expanded set
 export const CATEGORY_ICONS: Record<string, LucideIcon> = {
   Home,
   ShoppingCart,
@@ -58,7 +68,45 @@ export const CATEGORY_ICONS: Record<string, LucideIcon> = {
   Banknote,
   Building2,
   Zap,
+  GraduationCap,
+  PiggyBank,
+  Plane,
+  Baby,
+  Dog,
+  Smartphone,
+  ShoppingBag,
+  Coffee,
+  Dumbbell,
+  Music,
 };
+
+// Get icon name based on category name (for custom categories)
+export function getIconForCategoryName(name: string): string {
+  const lower = name.toLowerCase();
+  
+  if (lower.includes('vivienda') || lower.includes('casa') || lower.includes('hogar')) return 'Home';
+  if (lower.includes('comida') || lower.includes('alimenta') || lower.includes('restaur')) return 'Utensils';
+  if (lower.includes('transporte') || lower.includes('auto') || lower.includes('carro') || lower.includes('uber')) return 'Car';
+  if (lower.includes('salud') || lower.includes('médico') || lower.includes('doctor')) return 'Heart';
+  if (lower.includes('entreten') || lower.includes('juego') || lower.includes('ocio')) return 'Gamepad2';
+  if (lower.includes('servicio') || lower.includes('luz') || lower.includes('agua') || lower.includes('internet')) return 'Zap';
+  if (lower.includes('educación') || lower.includes('curso') || lower.includes('escuela') || lower.includes('universidad')) return 'GraduationCap';
+  if (lower.includes('ahorro') || lower.includes('saving')) return 'PiggyBank';
+  if (lower.includes('viaje') || lower.includes('vacacion') || lower.includes('vuelo')) return 'Plane';
+  if (lower.includes('bebé') || lower.includes('hijo') || lower.includes('niño')) return 'Baby';
+  if (lower.includes('mascota') || lower.includes('perro') || lower.includes('gato')) return 'Dog';
+  if (lower.includes('teléfono') || lower.includes('celular') || lower.includes('móvil')) return 'Smartphone';
+  if (lower.includes('ropa') || lower.includes('compra') || lower.includes('shopping')) return 'ShoppingBag';
+  if (lower.includes('café') || lower.includes('coffee')) return 'Coffee';
+  if (lower.includes('gym') || lower.includes('ejercicio') || lower.includes('deporte')) return 'Dumbbell';
+  if (lower.includes('música') || lower.includes('spotify') || lower.includes('concierto')) return 'Music';
+  if (lower.includes('trabajo') || lower.includes('salario') || lower.includes('oficina')) return 'Briefcase';
+  if (lower.includes('inversión') || lower.includes('accion') || lower.includes('bolsa')) return 'TrendingUp';
+  if (lower.includes('regalo')) return 'Gift';
+  if (lower.includes('renta') || lower.includes('alquiler')) return 'Building2';
+  
+  return 'ShoppingBag'; // Default icon
+}
 
 // Map any category name to one of the 6 standard categories
 export function normalizeCategory(name: string): string {

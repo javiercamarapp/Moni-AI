@@ -18,6 +18,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import {
   getStandardCategories,
   CATEGORY_ICONS,
+  getIconForCategoryName,
   type StandardCategory
 } from '@/lib/standardCategories';
 
@@ -112,15 +113,18 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
           }
         });
 
-        // Build custom categories sorted by recent usage
+        // Build custom categories sorted by recent usage with dynamic icons
         const customCats: DisplayCategory[] = (userCategories || [])
-          .map(cat => ({
-            id: cat.id,
-            name: cat.name.replace(/^[^\w\sáéíóúñ]+\s*/i, ''),
-            icon: 'ShoppingCart',
-            isCustom: true,
-            isRecent: (usageCount[cat.id] || 0) > 0
-          }))
+          .map(cat => {
+            const cleanName = cat.name.replace(/^[^\w\sáéíóúñ]+\s*/i, '');
+            return {
+              id: cat.id,
+              name: cleanName,
+              icon: getIconForCategoryName(cleanName),
+              isCustom: true,
+              isRecent: (usageCount[cat.id] || 0) > 0
+            };
+          })
           .sort((a, b) => (usageCount[b.id] || 0) - (usageCount[a.id] || 0));
 
         setCustomCategories(customCats);
@@ -193,7 +197,7 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
       const newDisplayCat: DisplayCategory = {
         id: newCat.id,
         name: newCat.name,
-        icon: selectedNewIcon,
+        icon: getIconForCategoryName(newCat.name),
         isCustom: true
       };
 
