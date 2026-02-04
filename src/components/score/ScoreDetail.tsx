@@ -169,7 +169,7 @@ const ScoreDetail: React.FC<ScoreDetailProps> = ({ onBack, score, onModalChange 
                           {comp.score}/{comp.maxScore}
                         </div>
                         
-                        <p className={`text-[11px] font-medium leading-tight px-2 ${subTextColor}`}>
+                        <p className={`text-[10px] font-medium leading-tight px-1 line-clamp-2 ${subTextColor}`}>
                           {comp.description}
                         </p>
                       </button>
