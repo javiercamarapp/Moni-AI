@@ -407,75 +407,54 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
               </span>
 
               {!showAddCategory ? (
-                <div className="space-y-3">
-                  {/* Standard Categories (5) + Add Button */}
-                  <div className="grid grid-cols-6 gap-1.5">
-                    {standardCategories.slice(0, 5).map((cat) => (
-                      <button
-                        key={cat.id}
-                        onClick={() => setSelectedCategoryId(cat.id)}
-                        className="flex flex-col items-center gap-0.5"
-                      >
-                        <div className={`h-9 w-9 rounded-full flex items-center justify-center transition-all ${
-                          selectedCategoryId === cat.id
-                            ? `${selectedColor} text-white shadow-md`
-                            : 'bg-white text-[#8D6E63] border border-gray-100'
-                        }`}>
-                          {getCategoryIcon(cat.icon)}
-                        </div>
-                        <span className={`text-[7px] font-semibold truncate w-full text-center ${
-                          selectedCategoryId === cat.id ? 'text-[#5D4037]' : 'text-gray-400'
-                        }`}>
-                          {cat.name}
-                        </span>
-                      </button>
-                    ))}
-                    
-                    {/* Add new category button */}
-                    <button
-                      onClick={() => setShowAddCategory(true)}
-                      className="flex flex-col items-center gap-0.5"
-                    >
-                      <div className="h-9 w-9 rounded-full bg-gradient-to-br from-[#8D6E63] to-[#5D4037] flex items-center justify-center shadow-md">
-                        <Plus size={16} className="text-white" />
-                      </div>
-                      <span className="text-[7px] font-semibold text-[#8D6E63]">Añadir</span>
-                    </button>
-                  </div>
-
-                  {/* Custom Categories (if any) */}
-                  {customCategories.length > 0 && (
-                    <div className="grid grid-cols-6 gap-1.5">
-                      {customCategories.slice(0, 6).map((cat) => (
-                        <div key={cat.id} className="relative group flex flex-col items-center gap-0.5">
+                <div className="flex items-center gap-2">
+                  {/* Scrollable categories carousel */}
+                  <div className="flex-1 overflow-x-auto no-scrollbar">
+                    <div className="flex gap-2 pb-1">
+                      {/* All categories: standard + custom */}
+                      {[...standardCategories, ...customCategories].map((cat) => (
+                        <div key={cat.id} className="relative group flex-shrink-0">
                           <button
                             onClick={() => setSelectedCategoryId(cat.id)}
-                            className="flex flex-col items-center"
+                            className="flex flex-col items-center gap-0.5 w-12"
                           >
-                            <div className={`h-9 w-9 rounded-full flex items-center justify-center transition-all ${
+                            <div className={`h-10 w-10 rounded-full flex items-center justify-center transition-all ${
                               selectedCategoryId === cat.id
                                 ? `${selectedColor} text-white shadow-md`
                                 : 'bg-white text-[#8D6E63] border border-gray-100'
                             }`}>
                               {getCategoryIcon(cat.icon)}
                             </div>
+                            <span className={`text-[8px] font-semibold truncate w-full text-center ${
+                              selectedCategoryId === cat.id ? 'text-[#5D4037]' : 'text-gray-400'
+                            }`}>
+                              {cat.name}
+                            </span>
                           </button>
-                          <span className={`text-[7px] font-semibold truncate w-full text-center ${
-                            selectedCategoryId === cat.id ? 'text-[#5D4037]' : 'text-gray-400'
-                          }`}>
-                            {cat.name}
-                          </span>
-                          {/* Delete button */}
-                          <button
-                            onClick={(e) => { e.stopPropagation(); handleDeleteCategory(cat.id); }}
-                            className="absolute -top-1.5 -right-0.5 h-4 w-4 bg-[#5D4037] text-white rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
-                          >
-                            <X size={10} />
-                          </button>
+                          {/* Delete button for custom categories */}
+                          {'isCustom' in cat && cat.isCustom && (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); handleDeleteCategory(cat.id); }}
+                              className="absolute -top-1 -right-1 h-4 w-4 bg-[#5D4037] text-white rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
+                            >
+                              <X size={10} />
+                            </button>
+                          )}
                         </div>
                       ))}
                     </div>
-                  )}
+                  </div>
+                  
+                  {/* Fixed Add button on the right */}
+                  <button
+                    onClick={() => setShowAddCategory(true)}
+                    className="flex flex-col items-center gap-0.5 flex-shrink-0"
+                  >
+                    <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[#8D6E63] to-[#5D4037] flex items-center justify-center shadow-md">
+                      <Plus size={18} className="text-white" />
+                    </div>
+                    <span className="text-[8px] font-semibold text-[#8D6E63]">Añadir</span>
+                  </button>
                 </div>
               ) : (
                 /* Add Category Form */
